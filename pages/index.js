@@ -1,22 +1,44 @@
 import Head from 'next/head'
+import Layout, { siteTitle } from '../components/layout';
+import utilStyles from '../styles/utils.module.css';
+import Link from 'next/link';
+import { getPostSimpleData } from '../lib/posts';
 
-export default function Home() {
+export async function getStaticProps() {
+  const blogs = await getPostSimpleData();
+  console.log(blogs);
+  return {
+    props: {
+      blogs,
+    },
+  };
+}
+
+export default function Home({ blogs }) {
   return (
     <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+
+      <Layout home>
+        <Head>
+          <title>{siteTitle}</title>
+        </Head>
+        <section className={utilStyles.headingMd}>
+          <p>Skills: nodejs, vue, react, uni-app, nextjs, miniprograming... </p>
+          <p>Blogs: </p>
+          <ul className={utilStyles.list}>
+            {blogs.map(({ id, title }) => (
+              <li className={utilStyles.listItem} key={id}>
+                <Link href={`/posts/${id}`}>
+                  <a>{title}</a>
+                </Link>
+                <br />
+              </li>
+            ))}
+          </ul>
+        </section>
+      </Layout>
 
       <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
         <div className="grid">
           <a href="https://nextjs.org/docs" className="card">
             <h3>Documentation &rarr;</h3>
@@ -70,12 +92,12 @@ export default function Home() {
         }
 
         main {
-          padding: 5rem 0;
           flex: 1;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          border-top: 1px solid#eaeaea;
         }
 
         footer {
@@ -95,11 +117,6 @@ export default function Home() {
           display: flex;
           justify-content: center;
           align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
         }
 
         .title a {
